@@ -6,9 +6,13 @@ import { Card } from './ui/Card';
 interface RecorderProps {
     onRecordingComplete: (file: File) => void;
     isLoading: boolean;
+    prompt: string;
+    setPrompt: (value: string) => void;
+    language: string;
+    setLanguage: (value: string) => void;
 }
 
-export function Recorder({ onRecordingComplete, isLoading }: RecorderProps) {
+export function Recorder({ onRecordingComplete, isLoading, prompt, setPrompt, language, setLanguage }: RecorderProps) {
     const [isRecording, setIsRecording] = useState(false);
     const [duration, setDuration] = useState(0);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -95,6 +99,37 @@ export function Recorder({ onRecordingComplete, isLoading }: RecorderProps) {
                     {isRecording ? "Recording in progress..." : "Click the button below to start recording"}
                 </p>
             </div>
+
+            {!isRecording && (
+                <div className="w-full mb-6 text-left space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-1">
+                            Context / Hints (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder="E.g. Meeting about Project X, Speakers: Alice, Bob"
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            disabled={isLoading}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-slate-400 mb-1">
+                            Language code (Optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={language}
+                            onChange={(e) => setLanguage(e.target.value)}
+                            placeholder="E.g. ja, en"
+                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            disabled={isLoading}
+                        />
+                    </div>
+                </div>
+            )}
 
             {!isRecording ? (
                 <button

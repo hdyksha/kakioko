@@ -26,7 +26,9 @@ def root():
 @app.post("/transcribe")
 def transcribe(
     file: UploadFile = File(...),
-    mode: str = Form("local")
+    mode: str = Form("local"),
+    prompt: str = Form(None),
+    language: str = Form(None)
 ):
     # Create temp file
     temp_filename = f"temp_{file.filename}"
@@ -34,7 +36,7 @@ def transcribe(
         shutil.copyfileobj(file.file, buffer)
     
     try:
-        result = transcribe_audio(temp_filename, mode=mode)
+        result = transcribe_audio(temp_filename, mode=mode, prompt=prompt, language=language)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

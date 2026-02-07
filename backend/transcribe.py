@@ -6,20 +6,22 @@ import requests
 import whisper
 
 # Load model globally to avoid reloading on every request
-# Using "base" model for balance between speed and accuracy for local dev
-# Users can change this to "small", "medium", "large" etc.
-model = whisper.load_model("base")
+# Using "large-v3-turbo" for better accuracy on GPU
+model_name = os.getenv("WHISPER_MODEL", "large-v3-turbo")
+print(f"Loading Whisper model: {model_name}...")
+model = whisper.load_model(model_name)
+print("Model loaded.")
 
-def transcribe_audio(file_path: str, mode: str = "local"):
+def transcribe_audio(file_path: str, mode: str = "local", prompt: str = None, language: str = None):
     """
     Transcribe audio using either local Whisper or AWS Cloud (via Amazon Transcribe).
     """
     if mode == "cloud":
         return transcribe_cloud(file_path)
     else:
-        return transcribe_local(file_path)
+        return transcribe_local(file_path, prompt, language)
 
-def transcribe_local(file_path: str):
+def transcribe_local(file_path: str, prompt: str = None, language: str = None):
     """
     Transcribe audio using the local Whisper model.
     """
@@ -27,7 +29,18 @@ def transcribe_local(file_path: str):
         return {"error": "File not found"}
     
     try:
-        result = model.transcribe(file_path)
+        # Use beam search for better quality
+        options = {
+            "beam_size": 5,
+            "best_of": 5,
+            "patience": 1.0
+        }
+        if prompt:
+            options["initial_prompt"] = prompt
+        if language:
+            options["language"] = language
+
+        result = model.transcribe(file_path, **options)
         return {"text": result["text"]}
     except Exception as e:
         return {"error": str(e)}

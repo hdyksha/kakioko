@@ -17,6 +17,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [transcription, setTranscription] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [prompt, setPrompt] = useState<string>("");
+  const [language, setLanguage] = useState<string>("");
 
   const handleAnalysis = async (file: File) => {
     setIsLoading(true);
@@ -26,6 +28,8 @@ export default function Home() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("mode", mode);
+    if (prompt) formData.append("prompt", prompt);
+    if (language) formData.append("language", language);
 
     try {
       // Assuming backend is running on localhost:8000
@@ -119,7 +123,14 @@ export default function Home() {
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <FileUploader startAnalysis={handleAnalysis} isLoading={isLoading} />
+                    <FileUploader
+                      startAnalysis={handleAnalysis}
+                      isLoading={isLoading}
+                      prompt={prompt}
+                      setPrompt={setPrompt}
+                      language={language}
+                      setLanguage={setLanguage}
+                    />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -129,7 +140,14 @@ export default function Home() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <Recorder onRecordingComplete={handleAnalysis} isLoading={isLoading} />
+                    <Recorder
+                      onRecordingComplete={handleAnalysis}
+                      isLoading={isLoading}
+                      prompt={prompt}
+                      setPrompt={setPrompt}
+                      language={language}
+                      setLanguage={setLanguage}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>
