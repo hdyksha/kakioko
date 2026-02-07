@@ -28,7 +28,9 @@ def transcribe(
     file: UploadFile = File(...),
     mode: str = Form("local"),
     prompt: str = Form(None),
-    language: str = Form(None)
+    language: str = Form(None),
+    model_name: str = Form("base"),
+    use_gpu: bool = Form(True)
 ):
     # Create temp file
     temp_filename = f"temp_{file.filename}"
@@ -36,7 +38,14 @@ def transcribe(
         shutil.copyfileobj(file.file, buffer)
     
     try:
-        result = transcribe_audio(temp_filename, mode=mode, prompt=prompt, language=language)
+        result = transcribe_audio(
+            temp_filename, 
+            mode=mode, 
+            prompt=prompt, 
+            language=language,
+            model_name=model_name,
+            use_gpu=use_gpu
+        )
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -4,24 +4,54 @@ import uuid
 import boto3
 import requests
 import whisper
+import torch
 
-# Load model globally to avoid reloading on every request
-# Using "large-v3-turbo" for better accuracy on GPU
-model_name = os.getenv("WHISPER_MODEL", "large-v3-turbo")
-print(f"Loading Whisper model: {model_name}...")
-model = whisper.load_model(model_name)
-print("Model loaded.")
+# Global state for model caching
+current_model = None
+current_model_name = None
+current_device = None
 
-def transcribe_audio(file_path: str, mode: str = "local", prompt: str = None, language: str = None):
+def get_model(model_name="base", use_gpu=True):
+    global current_model, current_model_name, current_device
+    
+    device = "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
+    
+    # If model is already loaded with same config, return it
+    if current_model is not None and current_model_name == model_name and current_device == device:
+        return current_model
+    
+    print(f"Loading Whisper model: {model_name} on {device}...")
+    
+    # Unload previous model if exists to free memory
+    if current_model is not None:
+        del current_model
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            
+    try:
+        current_model = whisper.load_model(model_name, device=device)
+        current_model_name = model_name
+        current_device = device
+        print("Model loaded.")
+        return current_model
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        # Fallback to base on CPU if failure
+        if device == "cuda":
+            print("Falling back to CPU...")
+            return get_model(model_name, use_gpu=False)
+        raise e
+
+def transcribe_audio(file_path: str, mode: str = "local", prompt: str = None, language: str = None, model_name: str = "base", use_gpu: bool = True):
     """
     Transcribe audio using either local Whisper or AWS Cloud (via Amazon Transcribe).
     """
     if mode == "cloud":
         return transcribe_cloud(file_path)
     else:
-        return transcribe_local(file_path, prompt, language)
+        return transcribe_local(file_path, prompt, language, model_name, use_gpu)
 
-def transcribe_local(file_path: str, prompt: str = None, language: str = None):
+def transcribe_local(file_path: str, prompt: str = None, language: str = None, model_name: str = "base", use_gpu: bool = True):
     """
     Transcribe audio using the local Whisper model.
     """
@@ -29,6 +59,8 @@ def transcribe_local(file_path: str, prompt: str = None, language: str = None):
         return {"error": "File not found"}
     
     try:
+        model = get_model(model_name, use_gpu)
+        
         # Use beam search for better quality
         options = {
             "beam_size": 5,

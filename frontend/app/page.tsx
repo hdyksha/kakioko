@@ -19,6 +19,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
   const [language, setLanguage] = useState<string>("");
+  const [modelName, setModelName] = useState<string>("base");
+  const [useGpu, setUseGpu] = useState<boolean>(true);
 
   const handleAnalysis = async (file: File) => {
     setIsLoading(true);
@@ -30,6 +32,8 @@ export default function Home() {
     formData.append("mode", mode);
     if (prompt) formData.append("prompt", prompt);
     if (language) formData.append("language", language);
+    formData.append("model_name", modelName);
+    formData.append("use_gpu", useGpu.toString());
 
     try {
       // Assuming backend is running on localhost:8000
@@ -130,6 +134,10 @@ export default function Home() {
                       setPrompt={setPrompt}
                       language={language}
                       setLanguage={setLanguage}
+                      modelName={modelName}
+                      setModelName={setModelName}
+                      useGpu={useGpu}
+                      setUseGpu={setUseGpu}
                     />
                   </motion.div>
                 ) : (
@@ -147,6 +155,10 @@ export default function Home() {
                       setPrompt={setPrompt}
                       language={language}
                       setLanguage={setLanguage}
+                      modelName={modelName}
+                      setModelName={setModelName}
+                      useGpu={useGpu}
+                      setUseGpu={setUseGpu}
                     />
                   </motion.div>
                 )}
