@@ -12,10 +12,10 @@ model = whisper.load_model("base")
 
 def transcribe_audio(file_path: str, mode: str = "local"):
     """
-    Transcribe audio using either local Whisper or AWS Bedrock (via Amazon Transcribe).
+    Transcribe audio using either local Whisper or AWS Cloud (via Amazon Transcribe).
     """
     if mode == "cloud":
-        return transcribe_bedrock(file_path)
+        return transcribe_cloud(file_path)
     else:
         return transcribe_local(file_path)
 
@@ -32,7 +32,7 @@ def transcribe_local(file_path: str):
     except Exception as e:
         return {"error": str(e)}
 
-def transcribe_bedrock(file_path: str):
+def transcribe_cloud(file_path: str):
     """
     Transcribe audio using AWS Amazon Transcribe.
     Requires AWS credentials and AWS_BUCKET_NAME environment variable.
