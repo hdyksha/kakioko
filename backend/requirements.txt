@@ -5,3 +5,4 @@ openai-whisper
 boto3
 torch
 torchaudio
+requests
