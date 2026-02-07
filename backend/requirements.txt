@@ -6,3 +6,4 @@ boto3
 torch
 torchaudio
 requests
+httpx
