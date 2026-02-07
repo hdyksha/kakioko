@@ -7,3 +7,4 @@ torch
 torchaudio
 requests
 httpx
+python-dotenv

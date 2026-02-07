@@ -1,5 +1,9 @@
 import os
 import shutil
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from transcribe import transcribe_audio

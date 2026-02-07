@@ -38,15 +38,20 @@ def transcribe_bedrock(file_path: str):
     Requires AWS credentials and AWS_BUCKET_NAME environment variable.
     """
     bucket_name = os.environ.get("AWS_BUCKET_NAME")
+    region = os.environ.get("AWS_REGION")
+    
     if not bucket_name:
         return {"error": "AWS_BUCKET_NAME environment variable not set"}
+    
+    if not region:
+        return {"error": "AWS_REGION environment variable not set"}
 
     if not os.path.exists(file_path):
         return {"error": "File not found"}
 
     try:
-        s3 = boto3.client('s3')
-        transcribe = boto3.client('transcribe')
+        s3 = boto3.client('s3', region_name=region)
+        transcribe = boto3.client('transcribe', region_name=region)
         
         file_name = os.path.basename(file_path)
         object_name = f"kakioko/{uuid.uuid4()}-{file_name}"
