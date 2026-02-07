@@ -47,7 +47,7 @@ def transcribe_audio(file_path: str, mode: str = "local", prompt: str = None, la
     Transcribe audio using either local Whisper or AWS Cloud (via Amazon Transcribe).
     """
     if mode == "cloud":
-        return transcribe_cloud(file_path)
+        return transcribe_cloud(file_path, language)
     else:
         return transcribe_local(file_path, prompt, language, model_name, use_gpu)
 
@@ -69,15 +69,20 @@ def transcribe_local(file_path: str, prompt: str = None, language: str = None, m
         }
         if prompt:
             options["initial_prompt"] = prompt
-        if language:
-            options["language"] = language
+        if language and language != "auto":
+            # Whisper expects 2-letter code (e.g. "ja") usually, but "ja-JP" might fail.
+            # Truncate to first 2 characters if it looks like a locale code.
+            if "-" in language:
+                 options["language"] = language.split("-")[0]
+            else:
+                 options["language"] = language
 
         result = model.transcribe(file_path, **options)
         return {"text": result["text"]}
     except Exception as e:
         return {"error": str(e)}
 
-def transcribe_cloud(file_path: str):
+def transcribe_cloud(file_path: str, language: str = "auto"):
     """
     Transcribe audio using AWS Amazon Transcribe.
     Requires AWS credentials and AWS_BUCKET_NAME environment variable.
@@ -108,12 +113,18 @@ def transcribe_cloud(file_path: str):
         job_name = f"kakioko-{uuid.uuid4()}"
         media_uri = f"s3://{bucket_name}/{object_name}"
         
-        transcribe.start_transcription_job(
-            TranscriptionJobName=job_name,
-            Media={'MediaFileUri': media_uri},
-            MediaFormat=file_name.split('.')[-1],
-            LanguageCode='ja-JP' # Defaulting to Japanese as per user name/context
-        )
+        transcription_job_args = {
+            "TranscriptionJobName": job_name,
+            "Media": {'MediaFileUri': media_uri},
+            "MediaFormat": file_name.split('.')[-1],
+        }
+
+        if language == "auto":
+            transcription_job_args["IdentifyLanguage"] = True
+        else:
+            transcription_job_args["LanguageCode"] = language or 'ja-JP'
+
+        transcribe.start_transcription_job(**transcription_job_args)
         
         # 3. Poll for completion
         while True:

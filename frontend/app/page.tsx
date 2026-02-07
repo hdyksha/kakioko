@@ -18,7 +18,7 @@ export default function Home() {
   const [transcription, setTranscription] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [prompt, setPrompt] = useState<string>("");
-  const [language, setLanguage] = useState<string>("");
+  const [language, setLanguage] = useState<string>("auto");
   const [modelName, setModelName] = useState<string>("base");
   const [useGpu, setUseGpu] = useState<boolean>(true);
 
@@ -130,6 +130,7 @@ export default function Home() {
                     <FileUploader
                       startAnalysis={handleAnalysis}
                       isLoading={isLoading}
+                      mode={mode}
                       prompt={prompt}
                       setPrompt={setPrompt}
                       language={language}
@@ -151,6 +152,7 @@ export default function Home() {
                     <Recorder
                       onRecordingComplete={handleAnalysis}
                       isLoading={isLoading}
+                      mode={mode}
                       prompt={prompt}
                       setPrompt={setPrompt}
                       language={language}

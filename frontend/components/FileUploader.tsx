@@ -14,9 +14,10 @@ interface FileUploaderProps {
     setModelName: (value: string) => void;
     useGpu: boolean;
     setUseGpu: (value: boolean) => void;
+    mode: 'local' | 'cloud';
 }
 
-export function FileUploader({ startAnalysis, isLoading, prompt, setPrompt, language, setLanguage, modelName, setModelName, useGpu, setUseGpu }: FileUploaderProps) {
+export function FileUploader({ startAnalysis, isLoading, prompt, setPrompt, language, setLanguage, modelName, setModelName, useGpu, setUseGpu, mode }: FileUploaderProps) {
     const [dragActive, setDragActive] = useState(false);
     const [file, setFile] = useState<File | null>(null);
 
@@ -136,49 +137,53 @@ export function FileUploader({ startAnalysis, isLoading, prompt, setPrompt, lang
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-400 mb-1">
-                                Language code (Optional)
+                                Language
                             </label>
-                            <input
-                                type="text"
+                            <select
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value)}
-                                placeholder="E.g. ja, en"
-                                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
                                 disabled={isLoading}
-                            />
+                            >
+                                <option value="auto">Auto (Detect)</option>
+                                <option value="ja-JP">Japanese (ja-JP)</option>
+                                <option value="en-US">English (en-US)</option>
+                            </select>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-400 mb-1">
-                                    Model
-                                </label>
-                                <select
-                                    value={modelName}
-                                    onChange={(e) => setModelName(e.target.value)}
-                                    className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
-                                    disabled={isLoading}
-                                >
-                                    <option value="tiny">Tiny (Fastest)</option>
-                                    <option value="base">Base (Balanced)</option>
-                                    <option value="small">Small</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="large-v3-turbo">Large-v3-Turbo (Best)</option>
-                                </select>
-                            </div>
-                            <div className="flex items-end pb-2">
-                                <label className="flex items-center space-x-3 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={useGpu}
-                                        onChange={(e) => setUseGpu(e.target.checked)}
-                                        className="w-5 h-5 rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
+                        {mode === 'local' && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-400 mb-1">
+                                        Model
+                                    </label>
+                                    <select
+                                        value={modelName}
+                                        onChange={(e) => setModelName(e.target.value)}
+                                        className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 appearance-none"
                                         disabled={isLoading}
-                                    />
-                                    <span className="text-sm font-medium text-slate-300">Use GPU</span>
-                                </label>
+                                    >
+                                        <option value="tiny">Tiny (Fastest)</option>
+                                        <option value="base">Base (Balanced)</option>
+                                        <option value="small">Small</option>
+                                        <option value="medium">Medium</option>
+                                        <option value="large-v3-turbo">Large-v3-Turbo (Best)</option>
+                                    </select>
+                                </div>
+                                <div className="flex items-end pb-2">
+                                    <label className="flex items-center space-x-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            checked={useGpu}
+                                            onChange={(e) => setUseGpu(e.target.checked)}
+                                            className="w-5 h-5 rounded border-slate-700 bg-slate-800 text-indigo-600 focus:ring-indigo-500"
+                                            disabled={isLoading}
+                                        />
+                                        <span className="text-sm font-medium text-slate-300">Use GPU</span>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
 
                     <button
