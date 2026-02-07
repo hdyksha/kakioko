@@ -13,7 +13,7 @@ import { clsx } from "clsx";
 
 export default function Home() {
   const [mode, setMode] = useState<'local' | 'cloud'>('local');
-  const [activeTab, setActiveTab] = useState<'upload' | 'record'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'record'>('record');
   const [isLoading, setIsLoading] = useState(false);
   const [transcription, setTranscription] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -86,16 +86,6 @@ export default function Home() {
 
               <div className="flex p-1 bg-slate-900/60 backdrop-blur-md rounded-full border border-slate-800">
                 <button
-                  onClick={() => setActiveTab('upload')}
-                  className={clsx(
-                    "flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all",
-                    activeTab === 'upload' ? "bg-slate-700 text-white shadow-md" : "text-slate-400 hover:text-white"
-                  )}
-                >
-                  <Upload className="w-4 h-4" />
-                  Upload File
-                </button>
-                <button
                   onClick={() => setActiveTab('record')}
                   className={clsx(
                     "flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all",
@@ -104,6 +94,16 @@ export default function Home() {
                 >
                   <Mic className="w-4 h-4" />
                   Record Audio
+                </button>
+                <button
+                  onClick={() => setActiveTab('upload')}
+                  className={clsx(
+                    "flex items-center gap-2 px-6 py-2 rounded-full text-sm font-medium transition-all",
+                    activeTab === 'upload' ? "bg-slate-700 text-white shadow-md" : "text-slate-400 hover:text-white"
+                  )}
+                >
+                  <Upload className="w-4 h-4" />
+                  Upload File
                 </button>
               </div>
             </div>
