@@ -1,34 +1,34 @@
-# Kakioko (カキオコ)
+# Kakioko
 
-プライバシー重視の AI 文字起こしアプリケーション。
-デフォルトではローカルの Whisper モデルを使用して音声データを外部に送信することなく文字起こしを行います。
-必要に応じて AWS クラウド (Amazon Transcribe) を利用することも可能です。
+A privacy-focused AI transcription application.
+By default, it uses a local Whisper model to transcribe audio data without sending it externally.
+Optionally, you can use AWS Cloud (Amazon Transcribe) if needed.
 
-## 特徴
+## Features
 
-- **プライバシーファースト**: ローカル処理がデフォルト。音声データはあなたのPCから出ません。
-- **モダンなUI**: Next.js と TailwindCSS による美しいインターフェース。
-- **録音機能**: ブラウザ上で直接録音して文字起こしが可能。
-- **クラウドフォールバック**: 処理速度や精度が必要な場合は、AWS クラウドを利用可能 (要設定)。
+- **Privacy First**: Local processing is the default. Audio data does not leave your PC.
+- **Modern UI**: A beautiful interface built with Next.js and TailwindCSS.
+- **Recording Capability**: Record and transcribe directly in the browser.
+- **Cloud Fallback**: AWS Cloud can be used when processing speed or accuracy is required (requires configuration).
 
-## 必要要件
+## Prerequisites
 
-- **Python 3.10+**: バックエンドの実行に必要
-- **Node.js 18+**: フロントエンドの実行に必要
-- **FFmpeg**: ローカルでの音声処理に必要
+- **Python 3.10+**: Required to run the backend.
+- **Node.js 18+**: Required to run the frontend.
+- **FFmpeg**: Required for local audio processing.
   - Ubuntu: `sudo apt install ffmpeg`
   - Mac: `brew install ffmpeg`
 
-## セットアップ
+## Setup
 
-### 1. リポジトリのクローン
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/hideyuki/kakioko.git
 cd kakioko
 ```
 
-### 2. バックエンド (Python) のセットアップ
+### 2. Backend (Python) Setup
 
 ```bash
 python3 -m venv backend/venv
@@ -36,7 +36,7 @@ source backend/venv/bin/activate
 pip install -r backend/requirements.txt
 ```
 
-### 3. フロントエンド (Next.js) のセットアップ
+### 3. Frontend (Next.js) Setup
 
 ```bash
 cd frontend
@@ -44,28 +44,28 @@ npm install
 cd ..
 ```
 
-## 実行方法
+## How to Run
 
-ターミナルを2つ開き、以下を実行してください。
+Open two terminals and run the following commands:
 
-**ターミナル 1 (バックエンド)**
+**Terminal 1 (Backend)**
 ```bash
 source backend/venv/bin/activate
 cd backend
 uvicorn main:app --reload --port 8000
 ```
 
-**ターミナル 2 (フロントエンド)**
+**Terminal 2 (Frontend)**
 ```bash
 cd frontend
 npm run dev
 ```
 
-ブラウザで `http://localhost:3000` にアクセスしてください。
+Open your browser and navigate to `http://localhost:3000`.
 
-## クラウドモード (AWS) の設定
+## Cloud Mode (AWS) Configuration
 
-クラウドモード (Amazon Transcribe) を使用する場合は、以下の環境変数を設定してバックエンドを起動してください。
+If you wish to use Cloud Mode (Amazon Transcribe), set the following environment variables before starting the backend.
 
 ```bash
 export AWS_ACCESS_KEY_ID=your_access_key
