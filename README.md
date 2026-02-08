@@ -4,6 +4,8 @@ A privacy-focused AI transcription application.
 By default, it uses a local Whisper model to transcribe audio data without sending it externally.
 Optionally, you can use AWS Cloud (Amazon Transcribe) if needed.
 
+   ![App Screenshot](./assets/screenshot.png)
+
 ## Features
 
 - **Privacy First**: Local processing is the default. Audio data does not leave your PC.
