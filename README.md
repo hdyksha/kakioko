@@ -24,7 +24,7 @@ Optionally, you can use AWS Cloud (Amazon Transcribe) if needed.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/hideyuki/kakioko.git
+git clone https://github.com/hdyksha/kakioko.git
 cd kakioko
 ```
 
